@@ -2,6 +2,8 @@
 
 pragma solidity >=0.8;
 
+import "hardhat/console.sol";
+
 contract Auction {
     address payable public owner;
     uint256 public startBlock;
@@ -21,14 +23,14 @@ contract Auction {
     mapping(address => uint256) public bids;
     uint256 bidIncrement;
 
-    constructor() {
-        owner = payable(msg.sender);
+    constructor(address payable _owner) {
+        owner = _owner;
         auctionState = State.Running;
         startBlock = block.number;
-        endBlock = block.number + 40320; //Blocks per week.
+        endBlock = block.number + 4; //Blocks per week.
 
         ipfsHash = "";
-        bidIncrement = 100;
+        bidIncrement = 0.1 ether;
     }
 
     modifier onlyOwner() {
@@ -65,7 +67,7 @@ contract Auction {
     function finalizeAuction() public {
         require(auctionState == State.Canceled || block.number > endBlock);
         require(msg.sender == owner || bids[msg.sender] > 0);
-
+   
         address payable recipiant = payable(msg.sender);
         uint256 value;
 
@@ -82,17 +84,18 @@ contract Auction {
                 }
             }
         }
+       
         bids[recipiant] = 0;
         recipiant.transfer(value);
     }
 
     function placeBid() public payable notOwner afterStart beforeEnd {
         require(auctionState == State.Running);
-        require(msg.value >= 100);
+        require(msg.value >= 0.1 ether);
 
         uint256 currentBid = bids[msg.sender] + msg.value;
-        require(currentBid > highestBindingBid);
-        bids[msg.sender] = currentBid;
+        require(currentBid > highestBindingBid || highestBindingBid == 0);
+        bids[msg.sender] = currentBid;  
 
         if (currentBid <= bids[highestBidder]) {
             highestBindingBid = min(
@@ -106,5 +109,22 @@ contract Auction {
             );
             highestBidder = msg.sender;
         }
+    }
+}
+
+contract CreateAuction {
+    address public immutable ownerA;
+    event ContractCreated(address factory, address newAddress);
+    Auction[] public deployedAuctions;
+
+    constructor() {
+        ownerA = msg.sender;
+    }
+
+    function createAuction() public returns (address newContract) {
+        Auction a = new Auction(payable(msg.sender));
+        deployedAuctions.push(a);
+        emit ContractCreated(address(this), address(a));
+        return address(a);
     }
 }
