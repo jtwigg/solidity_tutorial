@@ -45,13 +45,10 @@ describe('Counter', () => {
 
             let tx = { to: lottery.address, value: ethers.utils.parseEther("0.1") }
 
-
-            //          await wallets[0].sendTransaction(tx)
             for (const wallet of wallets) {
                 await wallet.sendTransaction(tx)
             }
 
-            
             let balance = (await lottery.getBalance()).toString()
             expect(balance).to.eq(ethers.utils.parseEther("0.3")) // <<<<<<<<<<< THIS ISN't WORKING
             expect(await lottery.players(0)).to.eq(wallets[0].address)
@@ -67,7 +64,6 @@ describe('Counter', () => {
             }
 
             balances.sort((a, b) => { return a.lte(b) ? -1 : 1 })
-            console.log(balances.map(ethers.utils.formatEther))
             expect(balances[2].gt(ethers.utils.parseEther("1000.1"))).to.be.true
         })
     })

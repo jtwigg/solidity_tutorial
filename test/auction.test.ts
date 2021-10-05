@@ -48,11 +48,8 @@ describe('Acution', () => {
     describe('create Auction', async () => {
         it('success', async () => {
 
-            let auctionContractTransaction = await auctionFactory.connect(walletSeller).createAuction()
-
+            await auctionFactory.connect(walletSeller).createAuction()
             let deployedAuction = await auctionFactory.deployedAuctions(0);
-
-            let auctionContractReceipt = await auctionContractTransaction.wait()
 
             // Filters
             let filter = auctionFactory.filters.ContractCreated(null, null)
