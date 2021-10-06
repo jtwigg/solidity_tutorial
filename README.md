@@ -6,7 +6,8 @@ npm run test
 ```
 
 
-### Mocha Explorer:
+### Appendix
+#### Mocha Explorer:
 https://hardhat.org/guides/vscode-tests.html
 
 `.vscode/settings.json` 
