@@ -1,3 +1,9 @@
+### Setup
+```
+npm i
+npm run compile
+npm run test
+```
 
 
 ### Mocha Explorer:
