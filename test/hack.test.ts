@@ -16,7 +16,7 @@ describe('Random Tests', () => {
     // 4
     describe('Test Contract', async () => {
         it('-', async () => {
-
+            ethers.provider.send("hardhat_reset", [])
             const [owner, customer] = await ethers.getSigners()
 
 

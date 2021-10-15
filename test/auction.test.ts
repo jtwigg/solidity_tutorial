@@ -25,6 +25,7 @@ describe('Acution', () => {
 
     beforeEach(async () => {
         // 1
+        ethers.provider.send("hardhat_reset", [])
         const signers: SignerWithAddress[] = await ethers.getSigners()
 
         walletManager = signers[0]

@@ -26,6 +26,7 @@ describe('CrowdFunding', () => {
 
     beforeEach(async () => {
         // 1
+        ethers.provider.send("hardhat_reset", [])
         let signers = await ethers.getSigners()
 
         walletManager = signers[0]
