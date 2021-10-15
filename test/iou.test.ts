@@ -25,8 +25,6 @@ describe('IOU Tests', () => {
 
             const [owner, customer1, customer2] = await ethers.getSigners()
 
-            expect(await customer1.getBalance().then(roundToEth)).to.eq(10000.0)
-
             const iosFactory = await ethers.getContractFactory('IOU', owner)
             let iosContract = await iosFactory.deploy();
 
@@ -38,7 +36,6 @@ describe('IOU Tests', () => {
             expect(await owner.getBalance().then(roundToEth)).to.eq(9997.0)
 
             // expect customer to have more ether
-            expect(await customer1.getBalance().then(roundToEth)).to.eq(10000.0)
             await iosContract.connect(customer1).withdraw()
             expect(await customer1.getBalance().then(roundToEth)).to.eq(10001.0)
 
