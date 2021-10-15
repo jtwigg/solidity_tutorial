@@ -16,3 +16,10 @@ https://hardhat.org/guides/vscode-tests.html
     "mochaExplorer.files": "test/**/*.{j,t}s",   
 }
 ```
+
+## Links
+// Best practices
+https://consensys.github.io/smart-contract-best-practices/recommendations/#favor-pull-over-push-for-external-calls
+
+Open Zepplin
+https://docs.openzeppelin.com/contracts/4.x/api/security

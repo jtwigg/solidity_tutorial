@@ -5,7 +5,7 @@ import exp from 'constants'
 import { solidity } from 'ethereum-waffle'
 import { ethers } from 'hardhat'
 import { CreateAuction } from '../typechain'
-import { roundToEth } from './convert'
+import { roundToEth } from './utils/convert'
 
 
 chai.use(solidity)

@@ -50,7 +50,7 @@ describe('Counter', () => {
             }
 
             let balance = (await lottery.getBalance()).toString()
-            expect(balance).to.eq(ethers.utils.parseEther("0.3")) // <<<<<<<<<<< THIS ISN't WORKING
+            expect(balance).to.eq(ethers.utils.parseEther("0.3"))
             expect(await lottery.players(0)).to.eq(wallets[0].address)
             expect(await lottery.players(1)).to.eq(wallets[1].address)
             expect(await lottery.players(2)).to.eq(wallets[2].address)
