@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { parseEther } from '@ethersproject/units'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -6,7 +7,7 @@ import exp from 'constants'
 import { solidity } from 'ethereum-waffle'
 import { ethers } from 'hardhat'
 import { CreateAuction, Crowdfunding } from '../typechain'
-import { roundToEth } from './utils/convert'
+import { roundToEth, toWei } from './utils/convert'
 import { filterEvents } from './utils/filters'
 
 
@@ -22,6 +23,8 @@ describe('CrowdFunding', () => {
     let wallet1: SignerWithAddress
     let wallet2: SignerWithAddress
     let wallet3: SignerWithAddress
+    let wallet4: SignerWithAddress
+    let wallet5: SignerWithAddress
     let recipiant: SignerWithAddress
 
     beforeEach(async () => {
@@ -33,7 +36,10 @@ describe('CrowdFunding', () => {
         wallet1 = signers[1]
         wallet2 = signers[2]
         wallet3 = signers[3]
-        recipiant = signers[4]
+        wallet4 = signers[4]
+        wallet5 = signers[5]
+
+        recipiant = signers[6]
 
 
 
@@ -51,24 +57,46 @@ describe('CrowdFunding', () => {
     describe('create', async () => {
         it('success', async () => {
 
-            await crownFundingContract.connect(wallet1).contribute({ value: 300 })
-            await crownFundingContract.connect(wallet2).contribute({ value: 350 })
-            await crownFundingContract.connect(wallet3).contribute({ value: 500 })
 
-            expect(await crownFundingContract.getBalance()).to.eq(1150)
+            await crownFundingContract.connect(wallet1).contribute({ value: toWei(3) })
+            await crownFundingContract.connect(wallet2).contribute({ value: toWei(3.5) })
+            await crownFundingContract.connect(wallet3).contribute({ value: toWei(5) })
+            await crownFundingContract.connect(wallet4).contribute({ value: toWei(4) })
+            await crownFundingContract.connect(wallet5).contribute({ value: toWei(3) })
 
-            let voteIndex1 = await crownFundingContract.functions.createRequest("req1", recipiant.address, BigNumber.from(400))
-            let voteIndex2 = await crownFundingContract.functions.createRequest("req2", recipiant.address, BigNumber.from(400))
+            expect(await crownFundingContract.getBalance()).to.eq(toWei(18.5))
+
+            let voteIndex1Async = await crownFundingContract.functions.createRequest("req1", recipiant.address, toWei(3))
+            let voteIndex2Async = await crownFundingContract.functions.createRequest("req2", recipiant.address, toWei(4))
+            let voteIndex3Async = await crownFundingContract.functions.createRequest("req3", recipiant.address, toWei(4))
 
             // Filters
             let filter = crownFundingContract.filters.RequestCreated()
 
-            let result = await filterEvents(crownFundingContract, filter, voteIndex2)
-            expect(result.args[0].toNumber()).eq(1)
+            let result = await filterEvents(crownFundingContract, filter, voteIndex3Async)
+            let requestIndex3 = result.args[0].toNumber()
+            expect(requestIndex3).eq(2)
 
-            crownFundingContract.connect(wallet1).vote(result.args[0])
-            //      crownFundingContract.connect(wallet1).vote()
 
+
+            console.log("1.1")
+            // Expect this to fail as there's been not votes
+            await expect(crownFundingContract.makePayment(0)).to.be.rejectedWith("Number of voters not reached", "Expect trying to make payment too early to fails")
+
+            console.log("1.2")
+
+            // Vote > 50%
+            crownFundingContract.connect(wallet1).vote(requestIndex3)
+            crownFundingContract.connect(wallet2).vote(requestIndex3)
+            crownFundingContract.connect(wallet3).vote(requestIndex3)
+
+            expect((await crownFundingContract.requests(requestIndex3)).value).to.eq(toWei(4)) // Expected value
+            expect(await recipiant.getBalance()).eq(toWei(10000))// No money yet. 
+            await crownFundingContract.makePayment(requestIndex3)
+            expect(await recipiant.getBalance()).eq(toWei(10000 + 4)) //Money received
+
+
+            // crownFundingContract.connect(wallet1).vote()
 
             // await auction.connect(wallet1).placeBid({ value: ethers.utils.parseEther("0.5") })
             // expect(roundToEth(await auction.highestBindingBid())).eq(0.1)
