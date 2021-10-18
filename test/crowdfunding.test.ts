@@ -77,13 +77,9 @@ describe('CrowdFunding', () => {
             let requestIndex3 = result.args[0].toNumber()
             expect(requestIndex3).eq(2)
 
-
-
-            console.log("1.1")
             // Expect this to fail as there's been not votes
             await expect(crownFundingContract.makePayment(0)).to.be.rejectedWith("Number of voters not reached", "Expect trying to make payment too early to fails")
 
-            console.log("1.2")
 
             // Vote > 50%
             crownFundingContract.connect(wallet1).vote(requestIndex3)
