@@ -95,38 +95,8 @@ describe('CrowdFunding', () => {
             await crownFundingContract.makePayment(requestIndex3)
             expect(await recipiant.getBalance()).eq(toWei(10000 + 4)) //Money received
 
-
-            // crownFundingContract.connect(wallet1).vote()
-
-            // await auction.connect(wallet1).placeBid({ value: ethers.utils.parseEther("0.5") })
-            // expect(roundToEth(await auction.highestBindingBid())).eq(0.1)
-            // expect(roundToEth(await wallet1.getBalance())).eq(9999.5)
-
-            // await auction.connect(wallet2).placeBid({ value: ethers.utils.parseEther("0.8") })
-            // expect(roundToEth(await auction.highestBindingBid())).eq(0.6)
-
-            // await auction.connect(wallet3).placeBid({ value: ethers.utils.parseEther("1.0") })
-            // expect(roundToEth(await auction.highestBindingBid())).eq(0.9)
-
-            // await auction.connect(wallet1).placeBid({ value: ethers.utils.parseEther("0.7") })
-            // expect(roundToEth(await auction.highestBindingBid())).eq(1.1)
-
-
-            // expect(wallet2.getBalance().then(roundToEth)).eventually.eq(9999.2)
-            // console.log("Calling finalize")
-            // await auction.connect(wallet2).finalizeAuction()
-            // expect(wallet2.getBalance().then(roundToEth)).eventually.eq(10000)
-
-            // await auction.connect(wallet3).finalizeAuction()
-            // expect(wallet3.getBalance().then(roundToEth)).eventually.eq(10000)
-
-            // await auction.connect(walletSeller).finalizeAuction()
-            // expect(walletSeller.getBalance().then(roundToEth)).eventually.eq(10001.1)
-
-            // await auction.connect(wallet1).finalizeAuction()
-            // expect(wallet1.getBalance().then(roundToEth)).eventually.eq(9998.9)
-
         })
     })
+
 
 })
