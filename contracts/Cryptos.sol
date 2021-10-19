@@ -91,4 +91,28 @@ contract CryptosICO is Cryptos {
     receive() external payable {
         invest();
     }
+
+    function transfer(address recipient, uint256 amount)
+        public
+        override
+        returns (bool)
+    {
+        require(block.timestamp > tokenTradeStart);
+        return ERC20.transfer(recipient, amount);
+    }
+
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public override returns (bool) {
+        require(block.timestamp > tokenTradeStart);
+        return ERC20.transferFrom(sender, recipient, amount);
+    }
+
+    function burn() public returns (bool) {
+        require(getCurrentState() == State.afterEnd);
+        ERC20._burn(founder, balanceOf(founder));
+        return true;
+    }
 }
